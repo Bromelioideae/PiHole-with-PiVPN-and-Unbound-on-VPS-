@@ -74,6 +74,11 @@ This will download all of your config files to a folder on your computer called 
 
 * Scan your QR code for your mobile devices, and/or install the downloaded configs for your laptop/desktop/other devices, turn them on.
 * I set them to "on-demand" meaning it'll always be on
+* **added to /etc/iptables/rules.v4 this line -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT This allowed me to access the pihole admin panel with pi.hole adres and private ip of my oracle machine. Of course you need to be connected to this pihole/VPN server.
+
+There is no need to add any network rules in oracle cloud, because if you add for port 80 or 53, it will allow also to access admin panel by public ip which can be used by everyone who knows this ip on internet which isn't safe. Also opening port 53 generaly isn't good practice from what I know.**
+
+
 * Go check out your PiHole at the address you saved in Step 2!
 
 # Install Unbound
@@ -86,20 +91,21 @@ This will download all of your config files to a folder on your computer called 
 
 # Notes
 ## Troubleshooting
-* Before being able to remotely log in, I had to run the command ```chmod 600 /Users/[your name]/.ssh/PiVPNHOLE.pem```
+* Before being able to remotely log in, you may have to run the command ```chmod 600 /Users/[your name]/.ssh/PiVPNHOLE.pem```
 * After clicking "generate keys" in PiVpn, you may get `/tmp/setupVars.conf permission denied`. I solved this by deleting that file.
 * You may need to run the piVpn script as sudo. Run with `curl -L https://install.pivpn.io |  sudo bash`
+* If, e.g., after reboot, the wg0 interface isn't up before Pi-hole is ready (more precisely, the pihole-FTL service is started), you may experience that Pi-hole doesn't listen on the Wireguard interface. This can be mitigated by artificially delaying the start of Pi-hole using, e.g., the config option
+
+`DELAY_STARTUP=5`
+in /etc/pihole/pihole-FTL.conf to have Pi-hole delay the start of the DNS server by 5 seconds.
 
 ## Credits
-* Thanks to @SuspectTyrannosaurus for fixing creating user profiles.
-* Special thanks to @DasJason for inspiring this project, troubleshooting, and various code tips/tricks.
-* Thanks to Thank you to @afruitpie for helping me figure out split-tunnelling and how to download the configuration files. 
-* Thanks also to @kryten2k35 for making sure this method of PiHole isn't exposed to the entire world (i.e., double checking port 53 is closed so the DNS isn't public).
-* Thanks to [@bee-san](https://github.com/bee-san) for troubleshooting tips and solutions
+* Thanks to @mgrimace (https://github.com/mgrimace/PiHole-with-PiVPN-and-Unbound-on-VPS-) for being the original source of this config guide.
+* Thanks to u/GoodAlps2607 (https://www.reddit.com/r/pihole/comments/zs0ake/cant_access_admin_panel_pihole_with_pivpn/) for his post that solved hours of chasing down the problem of not being able to connect to the pihole admin page.
 
 <h2>Support this project</h2>
 
-If you found this guide helpful, please consider buying me a coffee by clicking the link below. I'll do my best to keep this guide up to date and as user-friendly as possible. Thank you and take good care!
+If you found this guide helpful, please consider buying the original developer a coffee by clicking the link below. I'll do my best to keep this guide up to date and as user-friendly as possible. Thank you and take good care!
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R4QX73RWYB3ZA)
 
